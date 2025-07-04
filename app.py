@@ -6,9 +6,9 @@ import json
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
+
 UPLOAD_FOLDER = 'vault/uploads/mvps/'
 REGISTRY_FILE = 'mvp_registry.json'
-
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/')
@@ -30,9 +30,15 @@ def mvp_upload():
             filepath = os.path.join(UPLOAD_FOLDER, filename)
             file.save(filepath)
 
-            # Extract ZIP contents
-            with zipfile.ZipFile(filepath, 'r') as zip_ref:
-                zip_ref.extractall(os.path.join(UPLOAD_FOLDER, filename.replace('.zip', '')))
+            # Try to extract
+            try:
+                with zipfile.ZipFile(filepath, 'r') as zip_ref:
+                    extract_path = os.path.join(UPLOAD_FOLDER, filename.replace('.zip', ''))
+                    zip_ref.extractall(extract_path)
+                status = 'success'
+            except Exception as e:
+                flash(f"Extraction failed: {e}")
+                status = 'extract_failed'
 
             # Log to registry
             if os.path.exists(REGISTRY_FILE):
@@ -45,7 +51,7 @@ def mvp_upload():
                 'filename': filename,
                 'upload_path': filepath,
                 'uploaded_by': 'admin',
-                'status': 'success'
+                'status': status
             })
 
             with open(REGISTRY_FILE, 'w') as f:
@@ -56,7 +62,6 @@ def mvp_upload():
 
     return render_template('admin/mvp_upload.html')
 
-import os
 @app.route('/admin/view-uploads')
 def view_uploads():
     root_dir = os.path.join('vault', 'uploads', 'mvps')
@@ -65,17 +70,22 @@ def view_uploads():
     if not os.path.exists(root_dir):
         return "No uploads found."
 
-    for item in os.listdir(root_dir):
+    items = sorted(os.listdir(root_dir))
+    for item in items:
         item_path = os.path.join(root_dir, item)
         if os.path.isdir(item_path):
             contents = os.listdir(item_path)
-        else:
-            contents = ["(ZIP file)"]
-        upload_summary.append({
-            'name': item,
-            'is_dir': os.path.isdir(item_path),
-            'contents': contents
-        })
+            upload_summary.append({
+                'name': item,
+                'is_dir': True,
+                'contents': contents
+            })
+        elif item.endswith('.zip'):
+            upload_summary.append({
+                'name': item,
+                'is_dir': False,
+                'contents': ['(ZIP file)']
+            })
 
     return render_template('admin/view_uploads.html', uploads=upload_summary)
 
