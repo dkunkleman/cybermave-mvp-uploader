@@ -88,6 +88,54 @@ def view_uploads():
             })
 
     return render_template('admin/view_uploads.html', uploads=upload_summary)
+@app.route('/admin/memory-upload', methods=['GET', 'POST'])
+def memory_upload():
+    memory_folder = 'vault/memory/'
+    registry_file = 'vault/memory_registry.json'
+    os.makedirs(memory_folder, exist_ok=True)
+
+    if request.method == 'POST':
+        if 'zipfile' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
+        file = request.files['zipfile']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(memory_folder, filename)
+        file.save(filepath)
+
+        # Try extracting
+        try:
+            with zipfile.ZipFile(filepath, 'r') as zip_ref:
+                extract_path = os.path.join(memory_folder, filename.replace('.zip', ''))
+                zip_ref.extractall(extract_path)
+            status = 'success'
+        except Exception as e:
+            status = f'extract_failed: {str(e)}'
+
+        # Log
+        if os.path.exists(registry_file):
+            with open(registry_file, 'r') as f:
+                registry = json.load(f)
+        else:
+            registry = []
+
+        registry.append({
+            'filename': filename,
+            'status': status
+        })
+
+        with open(registry_file, 'w') as f:
+            json.dump(registry, f, indent=2)
+
+        flash(f'{filename} uploaded to memory.')
+        return redirect(url_for('memory_upload'))
+
+    return render_template('admin/memory_upload.html')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
