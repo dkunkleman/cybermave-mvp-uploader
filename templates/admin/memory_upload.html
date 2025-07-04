@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Memory Upload</title>
+  <title>Upload Memory Files</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 2rem;
-      background: #f9f9f9;
+      background: #f4f4f4;
     }
     .container {
       background: white;
@@ -14,18 +14,20 @@
       max-width: 600px;
       margin: auto;
       border-radius: 10px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-top: 0;
     }
     input[type=file] {
-      display: block;
-      margin: 1rem auto;
+      padding: 0.5rem;
+      margin: 1rem 0;
     }
     button {
       background: #2d89ef;
       border: none;
       color: white;
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.5rem;
       font-size: 1rem;
       border-radius: 6px;
       cursor: pointer;
@@ -33,26 +35,36 @@
     .dropzone {
       border: 2px dashed #999;
       padding: 2rem;
-      margin: 1rem auto;
-      background: #fefefe;
+      margin-bottom: 1rem;
+      background: #fff;
       color: #666;
+      cursor: pointer;
+    }
+    .dropzone.dragover {
+      border-color: #2d89ef;
+      background: #eef7ff;
+    }
+    ul {
+      text-align: left;
+      color: green;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Upload Memory ZIP</h2>
+    <h2>Upload Memory Files</h2>
     <form method="post" enctype="multipart/form-data">
       <div class="dropzone" id="dropzone">
-        Drag and drop a ZIP file here<br>or<br>
-        <input type="file" name="memoryfiles" multiple required>
+        Drag & drop files here or click below:
+        <input type="file" name="memoryfiles" id="fileInput" multiple required>
       </div>
-      <button type="submit">Upload</button>
+      <button type="submit">Upload Files</button>
     </form>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul style="color: green; text-align: left;">
+        <ul>
           {% for message in messages %}
             <li>{{ message }}</li>
           {% endfor %}
@@ -60,5 +72,24 @@
       {% endif %}
     {% endwith %}
   </div>
+
+  <script>
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('dragover');
+    });
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      fileInput.files = e.dataTransfer.files;
+    });
+  </script>
 </body>
 </html>
