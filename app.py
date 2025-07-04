@@ -55,4 +55,5 @@ def memory_upload():
     return render_template('admin/memory_upload.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=10000, debug=False)
+
