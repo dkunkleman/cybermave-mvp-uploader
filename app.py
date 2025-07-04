@@ -57,6 +57,27 @@ def mvp_upload():
     return render_template('admin/mvp_upload.html')
 
 import os
+@app.route('/admin/view-uploads')
+def view_uploads():
+    root_dir = os.path.join('vault', 'uploads', 'mvps')
+    upload_summary = []
+
+    if not os.path.exists(root_dir):
+        return "No uploads found."
+
+    for item in os.listdir(root_dir):
+        item_path = os.path.join(root_dir, item)
+        if os.path.isdir(item_path):
+            contents = os.listdir(item_path)
+        else:
+            contents = ["(ZIP file)"]
+        upload_summary.append({
+            'name': item,
+            'is_dir': os.path.isdir(item_path),
+            'contents': contents
+        })
+
+    return render_template('admin/view_uploads.html', uploads=upload_summary)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
