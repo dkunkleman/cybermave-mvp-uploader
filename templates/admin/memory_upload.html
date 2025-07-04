@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Memory Upload</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f9f9f9;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input[type=file] {
+      display: block;
+      margin: 1rem auto;
+    }
+    button {
+      background: #2d89ef;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .dropzone {
+      border: 2px dashed #999;
+      padding: 2rem;
+      margin: 1rem auto;
+      background: #fefefe;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Upload Memory ZIP</h2>
+    <form method="post" enctype="multipart/form-data">
+      <div class="dropzone" id="dropzone">
+        Drag and drop a ZIP file here<br>or<br>
+        <input type="file" name="zipfile" accept=".zip" required>
+      </div>
+      <button type="submit">Upload</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul style="color: green; text-align: left;">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </div>
+</body>
+</html>
