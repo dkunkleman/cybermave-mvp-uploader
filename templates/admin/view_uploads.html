@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Uploaded MVPs</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f7f7f7; }
+    .card {
+      background: white; padding: 1rem; margin-bottom: 1rem;
+      border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    h2 { margin-top: 0; }
+    ul { margin-top: 0.5rem; padding-left: 1.2rem; }
+    li { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <h1>MVP Upload Vault</h1>
+
+  {% for item in uploads %}
+    <div class="card">
+      <h2>{{ item.name }} {% if item.is_dir %}(folder){% else %}(zip){% endif %}</h2>
+      <ul>
+        {% for file in item.contents %}
+          <li>{{ file }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+</body>
+</html>
