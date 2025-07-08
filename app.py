@@ -5,7 +5,7 @@ import requests
 import datetime
 from werkzeug.utils import secure_filename
 
-app = Flask(name)
+app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 MEMORY_FOLDER = 'vault/memory/'
