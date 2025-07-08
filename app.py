@@ -34,6 +34,15 @@ def memory_upload():
             filename = secure_filename(file.filename)
             filepath = os.path.join(MEMORY_FOLDER, filename)
             file.save(filepath)
+import requests
+import datetime
+...
+# right after file.save(filepath)
+requests.post("https://cybermave-sync.onrender.com/file-received", json={
+    "filename": filename,
+    "path": filepath,
+    "timestamp": str(datetime.datetime.now())
+})
 
             # Log to registry
             if os.path.exists(REGISTRY_FILE):
