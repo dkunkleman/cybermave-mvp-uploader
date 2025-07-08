@@ -33,7 +33,7 @@ def memory_upload():
         for file in files:
             filename = secure_filename(file.filename)
             filepath = os.path.join(MEMORY_FOLDER, filename)
-            file.save(filepath)
+file.save(filepath)
 
 requests.post("https://cybermave-sync.onrender.com/file-received", json={
     "filename": filename,
