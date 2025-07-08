@@ -15,7 +15,7 @@ os.makedirs(MEMORY_FOLDER, exist_ok=True)
 
 @app.route('/')
 def index():
-return redirect(url_for('memory_upload'))
+    return redirect(url_for('memory_upload'))
 
 @app.route('/admin/memory-upload', methods=['GET', 'POST'])
 def memory_upload():
