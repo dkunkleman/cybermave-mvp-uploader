@@ -96,7 +96,23 @@ def index_vault_memory():
     })
 @app.route('/doc_index')
 def doc_index():
-    return index_vault_memory()
+    vault_path = "vault/memory"  # or your actual vault path
+    files = []
+    for root, dirs, filenames in os.walk(vault_path):
+        for filename in filenames:
+            if filename.lower().endswith((".pdf", ".docx", ".doc", ".txt")):
+                path = os.path.join(root, filename)
+                files.append({
+                    "filename": filename,
+                    "relative_path": path,
+                    "timestamp": os.path.getmtime(path),
+                    "ext": os.path.splitext(filename)[1].lower()
+                })
+    return jsonify({
+        "total_files": len(files),
+        "files": files
+    })
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000, debug=False)
