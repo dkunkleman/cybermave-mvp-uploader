@@ -94,6 +94,9 @@ def index_vault_memory():
         'total_files': len(files),
         'files': files
     })
+@app.route('/doc_index')
+def doc_index():
+    return index_vault_memory()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000, debug=False)
